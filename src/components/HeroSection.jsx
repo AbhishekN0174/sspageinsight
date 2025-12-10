@@ -1,10 +1,19 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { motion } from 'framer-motion'
 
 const HeroSection = ({ analytics }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const videoRef = useRef(null)
   const mouseTimerRef = useRef(null)
+
+  // Only load video when hero is in view to improve LCP
+  const { ref: inViewRef, inView } = useInView({ threshold: 0.25, triggerOnce: true })
+  const [loadVideo, setLoadVideo] = useState(false)
+
+  useEffect(() => {
+    if (inView) setLoadVideo(true)
+  }, [inView])
 
   // Debounced mouse move handler - updates only every 30ms
   const handleMouseMove = useCallback((e) => {
@@ -86,7 +95,7 @@ const HeroSection = ({ analytics }) => {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section ref={inViewRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Video */}
       <video
         ref={videoRef}
@@ -96,10 +105,14 @@ const HeroSection = ({ analytics }) => {
         playsInline
         className="absolute inset-0 z-0 w-full h-full object-cover"
         style={{ opacity: 0.5 }}
-        preload="metadata"
+        preload="none"
       >
-        <source src="/background_video.MOV" type="video/quicktime" />
-        <source src="/background_video.MOV" type="video/mp4" />
+        {loadVideo && (
+          <>
+            <source src="/background_video.mp4" type="video/mp4" />
+            <source src="/background_video.MOV" type="video/quicktime" />
+          </>
+        )}
         Your browser does not support the video tag.
       </video>
       {/* Light Gradient Overlay for readability */}

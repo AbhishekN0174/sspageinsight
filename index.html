@@ -26,32 +26,39 @@
     <!-- Meta Pixel Domain Verification -->
     <meta name="p:domain_verify" content="1746e2b1254627b2d12f253085e9d828"/>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QGL9W73G3B"></script>
+    <!-- Google tag (gtag.js) - deferred to after load -->
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-QGL9W73G3B');
+      function gtag(){dataLayer.push(arguments);} 
+      window.addEventListener('load', function() {
+        var s = document.createElement('script');
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-QGL9W73G3B';
+        s.async = true;
+        document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', 'G-QGL9W73G3B');
+      });
     </script>
 
-    <!-- Meta Pixel Code -->
+    <!-- Meta Pixel Code - deferred to after load -->
     <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1484319202568950');
-      fbq('track', 'PageView');
+      window.addEventListener('load', function() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+        document.head.appendChild(s);
+        window.fbq = window.fbq || function(){(window.fbq.q = window.fbq.q || []).push(arguments)};
+        fbq('init', '1484319202568950');
+        fbq('track', 'PageView');
+      });
     </script>
     <!-- End Meta Pixel Code -->
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts (load non-blocking) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" onload="this.rel='stylesheet'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    </noscript>
   </head>
   <body>
     <div id="root"></div>
