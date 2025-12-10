@@ -1,24 +1,33 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 
 const HeroSection = ({ analytics }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const videoRef = useRef(null)
+  const mouseTimerRef = useRef(null)
+
+  // Debounced mouse move handler - updates only every 30ms
+  const handleMouseMove = useCallback((e) => {
+    if (mouseTimerRef.current) return
+    
+    setMousePosition({
+      x: e.clientX,
+      y: e.clientY
+    })
+    
+    mouseTimerRef.current = setTimeout(() => {
+      mouseTimerRef.current = null
+    }, 30)
+  }, [])
 
   useEffect(() => {
-    const mouseMove = (e) => {
-      setMousePosition({
-        x: e.clientX,
-        y: e.clientY
-      })
-    }
-
-    window.addEventListener("mousemove", mouseMove)
+    window.addEventListener("mousemove", handleMouseMove, { passive: true })
 
     return () => {
-      window.removeEventListener("mousemove", mouseMove)
+      window.removeEventListener("mousemove", handleMouseMove)
+      if (mouseTimerRef.current) clearTimeout(mouseTimerRef.current)
     }
-  }, [])
+  }, [handleMouseMove])
 
   // Ensure video is muted
   useEffect(() => {
@@ -28,26 +37,26 @@ const HeroSection = ({ analytics }) => {
   }, [])
 
   // Pause video on mobile, play on desktop
-useEffect(() => {
-  const handleVideoByScreen = () => {
-    if (!videoRef.current) return
+  useEffect(() => {
+    const handleVideoByScreen = () => {
+      if (!videoRef.current) return
 
-    const isMobile = window.innerWidth < 768
+      const isMobile = window.innerWidth < 768
 
-    if (isMobile) {
-      videoRef.current.pause()
-      videoRef.current.style.display = 'none'
-    } else {
-      videoRef.current.style.display = 'block'
-      videoRef.current.play?.().catch(() => {})
+      if (isMobile) {
+        videoRef.current.pause()
+        videoRef.current.style.display = 'none'
+      } else {
+        videoRef.current.style.display = 'block'
+        videoRef.current.play?.().catch(() => {})
+      }
     }
-  }
 
-  handleVideoByScreen()
-  window.addEventListener('resize', handleVideoByScreen)
+    handleVideoByScreen()
+    window.addEventListener('resize', handleVideoByScreen, { passive: true })
 
-  return () => window.removeEventListener('resize', handleVideoByScreen)
-}, [])
+    return () => window.removeEventListener('resize', handleVideoByScreen)
+  }, [])
 
 
   const scrollToSignup = () => {
@@ -87,7 +96,7 @@ useEffect(() => {
         playsInline
         className="absolute inset-0 z-0 w-full h-full object-cover"
         style={{ opacity: 0.5 }}
-        preload="auto"
+        preload="metadata"
       >
         <source src="/background_video.MOV" type="video/quicktime" />
         <source src="/background_video.MOV" type="video/mp4" />
@@ -105,9 +114,9 @@ useEffect(() => {
           }}
         />
 
-        {/* Animated Orbs */}
+        {/* Animated Orbs - reduced size and animation complexity */}
         <motion.div
-          className="absolute top-20 left-20 w-[600px] h-[600px] bg-petal-200/40 rounded-full mix-blend-multiply filter blur-[100px]"
+          className="absolute top-20 left-20 w-[400px] h-[400px] bg-petal-200/40 rounded-full mix-blend-multiply filter blur-[100px]"
           animate={{
             x: [0, 80, 0],
             y: [0, 40, 0],
@@ -120,7 +129,7 @@ useEffect(() => {
           }}
         />
         <motion.div
-          className="absolute bottom-20 right-20 w-[600px] h-[600px] bg-primary-200/35 rounded-full mix-blend-multiply filter blur-[100px]"
+          className="absolute bottom-20 right-20 w-[400px] h-[400px] bg-primary-200/35 rounded-full mix-blend-multiply filter blur-[100px]"
           animate={{
             x: [0, -80, 0],
             y: [0, -40, 0],
@@ -133,7 +142,7 @@ useEffect(() => {
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-accent-peach-200/25 rounded-full mix-blend-multiply filter blur-[100px]"
+          className="absolute top-1/2 left-1/2 w-[350px] h-[350px] bg-accent-peach-200/25 rounded-full mix-blend-multiply filter blur-[100px]"
           animate={{
             x: [0, 40, 0],
             y: [0, -80, 0],

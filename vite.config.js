@@ -17,5 +17,32 @@ export default defineConfig(({ mode }) => {
     },
     // Include .MOV files as assets
     assetsInclude: ['**/*.MOV', '**/*.mov'],
+    build: {
+      // Code splitting for better caching
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor': ['react', 'react-dom', 'react-router-dom'],
+            'animation': ['framer-motion'],
+            'maps': ['@react-google-maps/api'],
+            'utils': ['date-fns', 'react-intersection-observer', 'react-countup'],
+          }
+        }
+      },
+      // Minify CSS and JS
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      },
+      // Target for modern browsers
+      target: 'es2020',
+      // Reduce chunk size warnings
+      chunkSizeWarningLimit: 1000,
+      // CSS optimization
+      cssCodeSplit: true,
+    }
   }
 })

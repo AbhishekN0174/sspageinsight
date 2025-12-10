@@ -1,5 +1,6 @@
 import { useInView } from 'react-intersection-observer'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useThrottle } from '../hooks/usePerformance'
 import { API_BASE_URL } from '../apiConfig'
 
 const LocationCard = ({ location, index, onClick }) => {
@@ -155,16 +156,19 @@ const MapSection = () => {
   const [studios, setStudios] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-
-    return () => window.removeEventListener('resize', checkMobile)
+  // Throttled resize handler
+  const handleResize = useCallback(() => {
+    setIsMobile(window.innerWidth < 768)
   }, [])
+
+  const throttledResize = useThrottle(handleResize, 150)
+
+  useEffect(() => {
+    handleResize()
+    window.addEventListener('resize', throttledResize, { passive: true })
+
+    return () => window.removeEventListener('resize', throttledResize)
+  }, [handleResize, throttledResize])
 
   // Convert lat/long to map position percentages with more spread
   // Bangalore approximate bounds: lat 12.8-13.1, long 77.4-77.8
