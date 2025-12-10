@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:sweatsocial.club)",
+      "Bash(npm install)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev)",
+      "Bash(git checkout:*)",
+      "Bash(npm install:*)",
+      "Bash(/Users/pankajsmac/Developer/sweat-social-website/.gitignore)",
+      "Bash(npm uninstall:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

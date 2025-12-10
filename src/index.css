@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    /* Prevent layout shift from scrollbar */
+    scrollbar-gutter: stable;
+  }
+  
+  body {
+    @apply bg-white text-gray-800 antialiased;
+    font-family: 'Nunito Sans', system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Kumbh Sans', system-ui, sans-serif;
+    @apply font-bold text-gray-900;
+  }
+  
+  /* Optimize images for CLS */
+  img {
+    content-visibility: auto;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(to right, #f48fb4, #f174ae, #e96d9a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-peach {
+    background: linear-gradient(to right, #ed7558, #f49a83, #e39a63);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #fdeef3, #fcd9e6, #f7a5c6);
+  }
+
+  .bg-gradient-premium {
+    background: linear-gradient(135deg, #fef6f9 0%, #fceef4 25%, #fce1ed 50%, #fac9dd 75%, #f7a5c6 100%);
+  }
+
+  .glass {
+    @apply bg-white/60 backdrop-blur-xl border border-petal-100/50;
+    box-shadow: 0 8px 32px 0 rgba(244, 143, 180, 0.1);
+  }
+
+  .glass-strong {
+    @apply bg-white/80 backdrop-blur-2xl border border-petal-200/60;
+    box-shadow: 0 8px 32px 0 rgba(244, 143, 180, 0.15);
+  }
+
+  .premium-card {
+    @apply glass rounded-3xl transition-all duration-300;
+  }
+
+  .premium-card:hover {
+    @apply bg-white/70 border-petal-200;
+    box-shadow: 0 20px 60px 0 rgba(244, 143, 180, 0.2);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(244, 143, 180, 0.2);
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fef6f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f48fb4, #e96d9a);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #f7a5c6, #f48fb4);
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(244, 143, 180, 0.3);
+  color: #2d1b24;
+}
+
+::-moz-selection {
+  background-color: rgba(244, 143, 180, 0.3);
+  color: #2d1b24;
+}
