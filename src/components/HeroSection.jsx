@@ -1,77 +1,53 @@
-import { useState, useEffect, useRef, memo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
-const HeroSection = memo(({ analytics }) => {
+const HeroSection = ({ analytics }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const videoRef = useRef(null)
 
-  // Debounced mouse move to reduce render frequency
   useEffect(() => {
-    let timeout
     const mouseMove = (e) => {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
-        setMousePosition({
-          x: e.clientX,
-          y: e.clientY
-        })
-      }, 16) // ~60fps throttle
+      setMousePosition({
+        x: e.clientX,
+        y: e.clientY
+      })
     }
 
-    window.addEventListener("mousemove", mouseMove, { passive: true })
+    window.addEventListener("mousemove", mouseMove)
 
     return () => {
-      clearTimeout(timeout)
       window.removeEventListener("mousemove", mouseMove)
     }
   }, [])
 
-  // Deferred video loading - loads AFTER LCP to avoid blocking critical rendering
+  // Ensure video is muted
   useEffect(() => {
-    const loadVideoDeferred = () => {
-      if (!videoRef.current) return
-
-      const isMobile = window.innerWidth < 768
-
-      // Load video preload data after LCP
-      videoRef.current.preload = 'auto'
+    if (videoRef.current) {
       videoRef.current.muted = true
-
-      if (isMobile) {
-        videoRef.current.style.display = 'none'
-        videoRef.current.pause()
-      } else {
-        videoRef.current.style.display = 'block'
-        // Fade in video when loaded
-        videoRef.current.onloadeddata = () => {
-          videoRef.current.style.opacity = '0.5'
-          videoRef.current.play?.().catch(() => {})
-        }
-      }
     }
-
-    // Defer video loading until after LCP (use requestIdleCallback if available)
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => loadVideoDeferred(), { timeout: 2000 })
-    } else {
-      setTimeout(loadVideoDeferred, 2000)
-    }
-    
-    const handleResize = () => {
-      if (!videoRef.current) return
-      const isMobile = window.innerWidth < 768
-      if (isMobile) {
-        videoRef.current.style.display = 'none'
-        videoRef.current.pause()
-      } else {
-        videoRef.current.style.display = 'block'
-      }
-    }
-    
-    window.addEventListener('resize', handleResize, { passive: true })
-
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  // Pause video on mobile, play on desktop
+useEffect(() => {
+  const handleVideoByScreen = () => {
+    if (!videoRef.current) return
+
+    const isMobile = window.innerWidth < 768
+
+    if (isMobile) {
+      videoRef.current.pause()
+      videoRef.current.style.display = 'none'
+    } else {
+      videoRef.current.style.display = 'block'
+      videoRef.current.play?.().catch(() => {})
+    }
+  }
+
+  handleVideoByScreen()
+  window.addEventListener('resize', handleVideoByScreen)
+
+  return () => window.removeEventListener('resize', handleVideoByScreen)
+}, [])
 
 
   const scrollToSignup = () => {
@@ -102,25 +78,21 @@ const HeroSection = memo(({ analytics }) => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Fast-loading CSS gradient background (replaces blocking video) */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-white/90 via-petal-50/70 to-primary-50/60" />
-      
-      {/* Deferred background video - loads after LCP via requestIdleCallback */}
+      {/* Background Video */}
       <video
         ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 z-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"
-        style={{ willChange: 'opacity' }}
-        preload="none"
+        className="absolute inset-0 z-0 w-full h-full object-cover"
+        style={{ opacity: 0.5 }}
+        preload="auto"
       >
         <source src="/background_video.MOV" type="video/quicktime" />
         <source src="/background_video.MOV" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      
       {/* Light Gradient Overlay for readability */}
       <div className="absolute inset-0 z-0 bg-gradient-to-br from-white/40 via-petal-50/60 to-primary-50/40" />
       {/* Animated Background - reduced opacity */}
@@ -293,8 +265,6 @@ const HeroSection = memo(({ analytics }) => {
 
     </section>
   )
-})
-
-HeroSection.displayName = 'HeroSection'
+}
 
 export default HeroSection

@@ -14,32 +14,16 @@
     <!-- Meta Pixel Domain Verification -->
     <meta name="p:domain_verify" content="1746e2b1254627b2d12f253085e9d828"/>
 
-    <!-- Preconnect to external domains for faster loading -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://connect.facebook.net">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.google-analytics.com">
-    
-    <!-- Resource hints for performance -->
-    <link rel="prefetch" href="https://www.googletagmanager.com/gtag/js?id=G-QGL9W73G3B">
-
-    <!-- Google Fonts with optimized loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- Google tag (gtag.js) - Deferred to reduce render blocking -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QGL9W73G3B"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-QGL9W73G3B', {
-        'anonymize_ip': true,
-        'page_path': window.location.pathname
-      });
+      gtag('config', 'G-QGL9W73G3B');
     </script>
 
-    <!-- Meta Pixel Code - Deferred for performance -->
+    <!-- Meta Pixel Code -->
     <script>
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -53,6 +37,11 @@
       fbq('track', 'PageView');
     </script>
     <!-- End Meta Pixel Code -->
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>

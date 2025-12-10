@@ -173,17 +173,17 @@ const ClassesSection = () => {
               <motion.article
                 key={session._id || index}
                 className="premium-card p-1"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.15 }}
+                whileHover={{ y: -8 }}
+                transition={{ duration: 0.25 }}
               >
                 <div className="relative rounded-[22px] overflow-hidden bg-white h-full flex flex-col">
-                  <div className="relative h-48" style={{ contentVisibility: 'auto' }}>
-                    <img
+                  <div className="relative h-48">
+                    <motion.img
                       src={session.class?.images?.[0] || session.studio?.images?.[0] || '/studio1.jpg'}
                       alt={session.className || 'SweatSocial Class'}
                       className="w-full h-full object-cover"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.5 }}
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-gray-900/30 to-transparent" />

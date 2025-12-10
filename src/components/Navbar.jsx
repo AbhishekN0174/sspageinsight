@@ -1,29 +1,21 @@
-import { useState, useEffect, memo, useCallback, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ssLogo from '../../ss_logo.png'
 import JoinStudioDialog from './JoinStudioDialog'
 
-const Navbar = memo(() => {
+const Navbar = () => {
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false)
 
-  // Optimize scroll handler with debouncing
   useEffect(() => {
-    let scrollTimeout
     const handleScroll = () => {
-      clearTimeout(scrollTimeout)
-      scrollTimeout = setTimeout(() => {
-        setIsScrolled(window.scrollY > 50)
-      }, 0)
+      setIsScrolled(window.scrollY > 50)
     }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => {
-      clearTimeout(scrollTimeout)
-      window.removeEventListener('scroll', handleScroll)
-    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
@@ -34,54 +26,14 @@ const Navbar = memo(() => {
     return () => window.removeEventListener('openJoinStudioDialog', handleOpenDialog)
   }, [])
 
-  const navLinks = useMemo(() => [
+  const navLinks = [
     { name: 'Features', href: '#features' },
     { name: 'Events', href: '/events' },
     { name: 'Classes', href: '/classes' },
     { name: 'Community', href: '#community' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '#contact' }
-  ], [])
-
-  const handleNavClick = useCallback((link) => {
-    if (link.href.startsWith('#')) {
-      const targetId = link.href.substring(1)
-      
-      // If on different page, navigate to homepage with hash first
-      if (window.location.pathname !== '/') {
-        window.location.href = `/${link.href}`
-        return
-      }
-      
-      // If on homepage, scroll to section
-      const element = document.getElementById(targetId)
-      if (element) {
-        const navbarHeight = 96 // Desktop navbar height
-        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-        const offsetPosition = elementPosition - navbarHeight
-        
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        })
-      } else {
-        // Retry after a short delay in case element hasn't rendered yet
-        setTimeout(() => {
-          const el = document.getElementById(targetId)
-          if (el) {
-            const navbarHeight = 96
-            const elementPosition = el.getBoundingClientRect().top + window.pageYOffset
-            const offsetPosition = elementPosition - navbarHeight
-            
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            })
-          }
-        }, 100)
-      }
-    }
-  }, [])
+  ]
 
   return (
     <motion.nav
@@ -107,7 +59,6 @@ const Navbar = memo(() => {
               src={ssLogo}
               alt="SweatSocial Logo"
               className="h-16 md:h-20 w-auto"
-              loading="eager"
             />
           </motion.a>
 
@@ -120,8 +71,44 @@ const Navbar = memo(() => {
                 onClick={(e) => {
                   if (link.href.startsWith('#')) {
                     e.preventDefault()
-                    handleNavClick(link)
+                    const targetId = link.href.substring(1)
+                    
+                    // If on different page, navigate to homepage with hash first
+                    if (window.location.pathname !== '/') {
+                      window.location.href = `/${link.href}`
+                      return
+                    }
+                    
+                    // If on homepage, scroll to section
+                    const element = document.getElementById(targetId)
+                    if (element) {
+                      // Account for fixed navbar height
+                      const navbarHeight = 96 // Desktop navbar height
+                      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+                      const offsetPosition = elementPosition - navbarHeight
+                      
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                      })
+                    } else {
+                      // Retry after a short delay in case element hasn't rendered yet
+                      setTimeout(() => {
+                        const el = document.getElementById(targetId)
+                        if (el) {
+                          const navbarHeight = 96
+                          const elementPosition = el.getBoundingClientRect().top + window.pageYOffset
+                          const offsetPosition = elementPosition - navbarHeight
+                          
+                          window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                          })
+                        }
+                      }, 100)
+                    }
                   }
+                  // For regular links (like /blog, /events), let them navigate normally
                 }}
                 className="text-gray-600 hover:text-gray-900 transition-colors font-medium relative group"
                 whileHover={{ y: -2 }}
@@ -191,11 +178,46 @@ const Navbar = memo(() => {
                     setIsMobileMenuOpen(false)
                     if (link.href.startsWith('#')) {
                       e.preventDefault()
-                      // Wait for menu to close, then handle navigation
+                      const targetId = link.href.substring(1)
+                      
+                      // If on different page, navigate to homepage with hash first
+                      if (window.location.pathname !== '/') {
+                        window.location.href = `/${link.href}`
+                        return
+                      }
+                      
+                      // Wait for menu to close, then scroll
                       setTimeout(() => {
-                        handleNavClick(link)
-                      }, 300)
+                        const element = document.getElementById(targetId)
+                        if (element) {
+                          // Account for fixed navbar height
+                          const navbarHeight = 80 // Mobile navbar height
+                          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+                          const offsetPosition = elementPosition - navbarHeight
+                          
+                          window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                          })
+                        } else {
+                          // Retry after another short delay
+                          setTimeout(() => {
+                            const el = document.getElementById(targetId)
+                            if (el) {
+                              const navbarHeight = 80
+                              const elementPosition = el.getBoundingClientRect().top + window.pageYOffset
+                              const offsetPosition = elementPosition - navbarHeight
+                              
+                              window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                              })
+                            }
+                          }, 100)
+                        }
+                      }, 300) // Wait for menu animation to complete
                     }
+                    // For regular links (like /blog, /events), let them navigate normally
                   }}
                   className="block text-gray-600 hover:text-gray-900 transition-colors font-medium py-2"
                   initial={{ opacity: 0, x: -20 }}
@@ -229,8 +251,6 @@ const Navbar = memo(() => {
       />
     </motion.nav>
   )
-})
-
-Navbar.displayName = 'Navbar'
+}
 
 export default Navbar

@@ -3,24 +3,13 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    /* Prevent layout shift from scrollbar */
-    scrollbar-gutter: stable;
-  }
-  
   body {
     @apply bg-white text-gray-800 antialiased;
     font-family: 'Nunito Sans', system-ui, sans-serif;
   }
-  
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Kumbh Sans', system-ui, sans-serif;
     @apply font-bold text-gray-900;
-  }
-  
-  /* Optimize images for CLS */
-  img {
-    content-visibility: auto;
   }
 }
 

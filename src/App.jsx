@@ -1,29 +1,20 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect, Suspense, lazy } from 'react'
+import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import HomePage from './components/HomePage'
+import EventsPage from './components/EventsPage'
+import EventDetailPage from './components/EventDetailPage'
+import ClassesPage from './components/ClassesPage'
+import ClassDetailPage from './components/ClassDetailPage'
+import BlogPage from './components/BlogPage'
+import BlogDetailPage from './components/BlogDetailPage'
+import AboutPage from './components/AboutPage'
+import PrivacyPolicyPage from './components/PrivacyPolicyPage'
+import TermsPage from './components/TermsPage'
 import WhatsAppFloat from './components/WhatsAppFloat'
 import AnalyticsProvider from './components/AnalyticsProvider'
 import { AuthProvider } from './context/AuthContext'
-
-// Lazy load pages for better code splitting
-const EventsPage = lazy(() => import('./components/EventsPage'))
-const EventDetailPage = lazy(() => import('./components/EventDetailPage'))
-const ClassesPage = lazy(() => import('./components/ClassesPage'))
-const ClassDetailPage = lazy(() => import('./components/ClassDetailPage'))
-const BlogPage = lazy(() => import('./components/BlogPage'))
-const BlogDetailPage = lazy(() => import('./components/BlogDetailPage'))
-const AboutPage = lazy(() => import('./components/AboutPage'))
-const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'))
-const TermsPage = lazy(() => import('./components/TermsPage'))
-
-// Loading fallback component
-const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-petal-500"></div>
-  </div>
-)
 
 function ScrollToHash() {
   const location = useLocation()
@@ -53,20 +44,18 @@ function App() {
 
           {/* Main Content */}
           <main>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/events" element={<EventsPage />} />
-                <Route path="/events/:eventId" element={<EventDetailPage />} />
-                <Route path="/classes" element={<ClassesPage />} />
-                <Route path="/classes/:sessionId" element={<ClassDetailPage />} />
-                <Route path="/blog" element={<BlogPage />} />
-                <Route path="/blog/:slug" element={<BlogDetailPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/privacy" element={<PrivacyPolicyPage />} />
-                <Route path="/terms" element={<TermsPage />} />
-              </Routes>
-            </Suspense>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/events/:eventId" element={<EventDetailPage />} />
+              <Route path="/classes" element={<ClassesPage />} />
+              <Route path="/classes/:sessionId" element={<ClassDetailPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogDetailPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+            </Routes>
           </main>
 
           <Footer />
