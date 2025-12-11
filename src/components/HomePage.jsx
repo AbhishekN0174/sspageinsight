@@ -9,42 +9,40 @@ const MapSection = lazy(() => import('./MapSection'))
 const BlogSection = lazy(() => import('./BlogSection'))
 const FinalCTA = lazy(() => import('./FinalCTA'))
 
-const SectionFallback = ({ height = 200 }) => (
-  <div style={{ minHeight: height }} className="flex items-center justify-center">
-    <div className="w-10 h-10 bg-petal-200 rounded-full animate-pulse" />
-  </div>
-)
+// No loading fallback - sections load instantly without spinners
+// This improves perceived performance and prevents jank
+const NoFallback = null
 
 const HomePage = () => {
   const analytics = useAnalytics('Home')
 
   return (
     <>
-      <Suspense fallback={<SectionFallback height={600} />}>
+      <Suspense fallback={NoFallback}>
         <HeroSection analytics={analytics} />
       </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
+      <Suspense fallback={NoFallback}>
         <FeatureShowcase />
       </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
+      <Suspense fallback={NoFallback}>
         <CommunitySection />
       </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
+      <Suspense fallback={NoFallback}>
         <StudiosGallery />
       </Suspense>
 
-      <Suspense fallback={<SectionFallback height={500} />}>
+      <Suspense fallback={NoFallback}>
         <MapSection />
       </Suspense>
 
-      <Suspense fallback={<SectionFallback />}>
+      <Suspense fallback={NoFallback}>
         <BlogSection />
       </Suspense>
 
-      <Suspense fallback={<SectionFallback height={300} />}>
+      <Suspense fallback={NoFallback}>
         <FinalCTA analytics={analytics} />
       </Suspense>
     </>
