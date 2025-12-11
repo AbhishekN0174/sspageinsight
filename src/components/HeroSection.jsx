@@ -108,7 +108,7 @@ const HeroSection = ({ analytics }) => {
         playsInline
         className="absolute inset-0 z-0 w-full h-full object-cover"
         style={{ opacity: 0.5 }}
-        preload="metadata"
+        preload="none"
         poster="/background.jpg"
       >
         {loadVideo && (

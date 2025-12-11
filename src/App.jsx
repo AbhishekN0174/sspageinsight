@@ -20,9 +20,14 @@ const AboutPage = lazy(() => import('./components/AboutPage'))
 const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'))
 const TermsPage = lazy(() => import('./components/TermsPage'))
 
-// No loading fallback - render pages instantly without spinner
-// This improves perceived performance and prevents jank
-const NoLoadingFallback = null
+// Loading fallback component
+const LoadingFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="animate-pulse">
+      <div className="w-12 h-12 bg-petal-200 rounded-full"></div>
+    </div>
+  </div>
+)
 
 function ScrollToHash() {
   const location = useLocation()
@@ -52,7 +57,7 @@ function App() {
 
           {/* Main Content */}
           <main>
-            <Suspense fallback={NoLoadingFallback}>
+            <Suspense fallback={<LoadingFallback />}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/events" element={<EventsPage />} />
