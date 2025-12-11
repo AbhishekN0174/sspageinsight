@@ -3,9 +3,11 @@ import { useEffect, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import HomePage from './components/HomePage'
-import WhatsAppFloat from './components/WhatsAppFloat'
 import AnalyticsProvider from './components/AnalyticsProvider'
 import { AuthProvider } from './context/AuthContext'
+
+// Lazy load WhatsApp button to defer non-critical UI
+const WhatsAppFloat = lazy(() => import('./components/WhatsAppFloat'))
 
 // Lazy load pages
 const EventsPage = lazy(() => import('./components/EventsPage'))
@@ -73,8 +75,10 @@ function App() {
 
           <Footer />
 
-          {/* Floating WhatsApp Button */}
-          <WhatsAppFloat />
+          {/* Lazy load floating WhatsApp Button */}
+          <Suspense fallback={null}>
+            <WhatsAppFloat />
+          </Suspense>
         </div>
       </AuthProvider>
     </AnalyticsProvider>
