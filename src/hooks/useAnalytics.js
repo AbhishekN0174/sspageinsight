@@ -1,13 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
-import {
-  trackPageView,
-  trackEvent,
-  trackButtonClick,
-  trackLinkClick,
-  startTimeTracking,
-  stopTimeTracking,
-  trackNavigationFlow,
-} from '../utils/analytics'
+// Analytics functions are loaded dynamically to avoid bundling heavy analytics libs in the main chunk
 
 /**
  * Custom hook for analytics tracking
@@ -19,63 +11,94 @@ export const useAnalytics = (pageName, pageProperties = {}, options = {}) => {
   const cleanupRef = useRef(null)
   const previousPageRef = useRef(null)
 
-  // Track page view on mount
+  // Track page view on mount (analytics loaded lazily)
   useEffect(() => {
     if (!pageName || !autoTrackPage) return
 
-    // Track navigation flow
-    const prevPage = previousPageRef.current
-    if (prevPage && prevPage !== pageName) {
-      trackNavigationFlow(pageName, prevPage)
+    let mounted = true
+    let timeCleanup = null
+
+    import('../utils/analytics')
+      .then((mod) => {
+        if (!mounted) return
+        // track navigation flow if previous page exists
+        const prevPage = previousPageRef.current
+        if (prevPage && prevPage !== pageName && mod.trackNavigationFlow) {
+          mod.trackNavigationFlow(pageName, prevPage)
+        }
+        previousPageRef.current = pageName
+
+        if (mod.trackPageView) mod.trackPageView(pageName, pageProperties)
+
+        if (mod.startTimeTracking) {
+          timeCleanup = mod.startTimeTracking(pageName)
+        }
+      })
+      .catch(() => {})
+
+    cleanupRef.current = () => {
+      if (timeCleanup) timeCleanup()
     }
-    previousPageRef.current = pageName
 
-    // Track page view
-    trackPageView(pageName, pageProperties)
-
-    // Start time tracking
-    const timeCleanup = startTimeTracking(pageName)
-
-    cleanupRef.current = timeCleanup
-
-    // Cleanup on unmount
     return () => {
-      if (cleanupRef.current) {
-        cleanupRef.current()
-      }
-      stopTimeTracking()
+      mounted = false
+      if (cleanupRef.current) cleanupRef.current()
+      // Try to stop time tracking if available
+      import('../utils/analytics')
+        .then((mod) => {
+          if (mod.stopTimeTracking) mod.stopTimeTracking()
+        })
+        .catch(() => {})
     }
   }, [pageName, autoTrackPage, JSON.stringify(pageProperties)])
 
   // Track custom event
   const track = useCallback((eventName, properties = {}) => {
-    trackEvent(eventName, {
-      page_name: pageName,
-      ...properties,
-    })
+    import('../utils/analytics')
+      .then((mod) => {
+        if (mod.trackEvent) {
+          mod.trackEvent(eventName, {
+            page_name: pageName,
+            ...properties,
+          })
+        }
+      })
+      .catch(() => {})
   }, [pageName])
 
   // Track button click
   const trackClick = useCallback((buttonName, properties = {}) => {
-    trackButtonClick(buttonName, {
-      page_name: pageName,
-      ...properties,
-    })
+    import('../utils/analytics')
+      .then((mod) => {
+        if (mod.trackButtonClick) {
+          mod.trackButtonClick(buttonName, {
+            page_name: pageName,
+            ...properties,
+          })
+        }
+      })
+      .catch(() => {})
   }, [pageName])
 
   // Track link click
   const trackLink = useCallback((linkName, linkUrl, properties = {}) => {
-    trackLinkClick(linkName, linkUrl, {
-      page_name: pageName,
-      ...properties,
-    })
+    import('../utils/analytics')
+      .then((mod) => {
+        if (mod.trackLinkClick) {
+          mod.trackLinkClick(linkName, linkUrl, {
+            page_name: pageName,
+            ...properties,
+          })
+        }
+      })
+      .catch(() => {})
   }, [pageName])
 
   return {
     track,
     trackClick,
     trackLink,
-    trackPageView: () => trackPageView(pageName, pageProperties),
+    trackPageView: () => import('../utils/analytics').then(mod => mod.trackPageView && mod.trackPageView(pageName, pageProperties)).catch(() => {}),
   }
 }
 

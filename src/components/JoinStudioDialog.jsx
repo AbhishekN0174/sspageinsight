@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { API_BASE_URL } from '../apiConfig'
-import { identifyUserWithEmail } from '../utils/analytics'
 
 const JoinStudioDialog = ({ isOpen, onClose }) => {
   // Lock body scroll when dialog opens
@@ -100,15 +99,21 @@ const JoinStudioDialog = ({ isOpen, onClose }) => {
         throw new Error('Failed to submit inquiry')
       }
 
-      // Update anonymous user with email in analytics
+      // Update anonymous user with email in analytics (deferred)
       if (formData.email) {
-        identifyUserWithEmail(formData.email, {
-          name: formData.fullName,
-          phone_number: formData.phoneNumber,
-          location: formData.location,
-          source: 'join_studio_dialog',
-          form_type: 'studio_inquiry',
-        })
+        import('../utils/analytics')
+          .then(mod => {
+            if (mod.identifyUserWithEmail) {
+              mod.identifyUserWithEmail(formData.email, {
+                name: formData.fullName,
+                phone_number: formData.phoneNumber,
+                location: formData.location,
+                source: 'join_studio_dialog',
+                form_type: 'studio_inquiry',
+              })
+            }
+          })
+          .catch(() => {})
       }
 
       setSubmitStatus('success')

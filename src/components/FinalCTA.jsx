@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { API_BASE_URL } from '../apiConfig'
-import { identifyUserWithEmail } from '../utils/analytics'
 
 const FinalCTA = ({ analytics }) => {
   const [email, setEmail] = useState('')
@@ -37,11 +36,17 @@ const FinalCTA = ({ analytics }) => {
         throw new Error('Failed to submit email')
       }
 
-      // Update anonymous user with email in analytics
-      identifyUserWithEmail(email, {
-        source: 'newsletter_signup',
-        form_location: 'final_cta',
-      })
+      // Update anonymous user with email in analytics (deferred)
+      import('../utils/analytics')
+        .then(mod => {
+          if (mod.identifyUserWithEmail) {
+            mod.identifyUserWithEmail(email, {
+              source: 'newsletter_signup',
+              form_location: 'final_cta',
+            })
+          }
+        })
+        .catch(() => {})
 
       const emailDomain = email.split('@')[1]?.toLowerCase() || 'unknown'
       analytics?.track?.('Final CTA Submitted', {
