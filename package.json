@@ -9,7 +9,6 @@
     "framer-motion": "^10.16.4",
     "mixpanel-browser": "^2.72.0",
     "react": "^18.2.0",
-    "react-countup": "^6.5.0",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.5.3",
     "react-router-dom": "^6.30.2"

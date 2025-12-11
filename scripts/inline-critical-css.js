@@ -123,6 +123,13 @@ export default function inlineCriticalCss() {
         '<script type="module" crossorigin defer src="$1"><\/script>'
       )
       
+      // Optimize CSS loading: Change stylesheet to preload + onload pattern
+      // This makes CSS non-blocking on modern browsers
+      html = html.replace(
+        /<link rel="stylesheet" crossorigin href="\/assets\/([^"]+\.css)">(?=\s*<\/head>)/,
+        '<link rel="preload" as="style" crossorigin href="/assets/$1" onload="this.rel=\'stylesheet\'">\n    <noscript><link rel="stylesheet" crossorigin href="/assets/$1"></noscript>'
+      )
+      
       // Optimize Google Fonts URL to load only critical weights (400,600,700) on mobile
       // Split fonts: load common weights immediately, defer others
       html = html.replace(

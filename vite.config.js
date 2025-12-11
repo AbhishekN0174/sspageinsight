@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
             'vendor': ['react', 'react-dom', 'react-router-dom'],
             'animation': ['framer-motion'],
             'maps': ['@react-google-maps/api'],
-            'utils': ['date-fns', 'react-intersection-observer', 'react-countup'],
+            'utils': ['date-fns', 'react-intersection-observer'],
           }
         }
       },
