@@ -135,6 +135,8 @@ const StudiosGallery = () => {
                     <img
                       src={studio.image}
                       alt={studio.title}
+                      width={240}
+                      height={240}
                       className="w-full h-[200px] lg:h-[240px] object-cover"
                       loading="lazy"
                     />
@@ -196,6 +198,8 @@ const StudiosGallery = () => {
                     <img
                       src={studio.image}
                       alt={studio.title}
+                      width={240}
+                      height={220}
                       className="w-full h-[200px] sm:h-[220px] object-cover"
                       loading="lazy"
                     />
