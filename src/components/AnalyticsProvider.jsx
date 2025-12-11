@@ -16,24 +16,57 @@ const AnalyticsProvider = ({ children }) => {
     }
 
     let mounted = true
-    // Defer loading analytics until after first paint
-    const t = setTimeout(() => {
-      import('../utils/analytics')
-        .then((mod) => {
-          if (!mounted) return
-          analyticsRef.current = mod
-          if (MIXPANEL_TOKEN && mod.initAnalytics) {
-            mod.initAnalytics(MIXPANEL_TOKEN)
-          }
-        })
-        .catch((err) => {
-          console.error('Failed to load analytics module:', err)
-        })
-    }, 2000)
+    let timeoutId = null
+    
+    // Use requestIdleCallback if available, fallback to setTimeout
+    const scheduleAnalyticsLoad = () => {
+      if ('requestIdleCallback' in window) {
+        // Defer to when browser is idle
+        timeoutId = window.requestIdleCallback(
+          () => {
+            import('../utils/analytics')
+              .then((mod) => {
+                if (!mounted) return
+                analyticsRef.current = mod
+                if (MIXPANEL_TOKEN && mod.initAnalytics) {
+                  mod.initAnalytics(MIXPANEL_TOKEN)
+                }
+              })
+              .catch((err) => {
+                console.error('Failed to load analytics module:', err)
+              })
+          },
+          { timeout: 2000 } // Fallback to 2s timeout
+        )
+      } else {
+        // Fallback to setTimeout for older browsers
+        timeoutId = setTimeout(() => {
+          import('../utils/analytics')
+            .then((mod) => {
+              if (!mounted) return
+              analyticsRef.current = mod
+              if (MIXPANEL_TOKEN && mod.initAnalytics) {
+                mod.initAnalytics(MIXPANEL_TOKEN)
+              }
+            })
+            .catch((err) => {
+              console.error('Failed to load analytics module:', err)
+            })
+        }, 2000)
+      }
+    }
+
+    scheduleAnalyticsLoad()
 
     return () => {
       mounted = false
-      clearTimeout(t)
+      if (timeoutId !== null) {
+        if (typeof window.cancelIdleCallback === 'function') {
+          window.cancelIdleCallback(timeoutId)
+        } else {
+          clearTimeout(timeoutId)
+        }
+      }
     }
   }, [])
 
