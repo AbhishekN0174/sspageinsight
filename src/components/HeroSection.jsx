@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { motion } from 'framer-motion'
+import AsyncMotion from './AsyncMotion'
 
 const HeroSection = ({ analytics }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -128,43 +128,55 @@ const HeroSection = ({ analytics }) => {
         />
 
         {/* Animated Orbs - reduced size and animation complexity */}
-        <motion.div
+        <AsyncMotion
+          element="div"
           className="absolute top-20 left-20 w-[400px] h-[400px] bg-petal-200/40 rounded-full mix-blend-multiply filter blur-[100px]"
-          animate={{
-            x: [0, 80, 0],
-            y: [0, 40, 0],
-            scale: [1, 1.15, 1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut"
+          load={inView}
+          motionProps={{
+            animate: {
+              x: [0, 80, 0],
+              y: [0, 40, 0],
+              scale: [1, 1.15, 1],
+            },
+            transition: {
+              duration: 10,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            },
           }}
         />
-        <motion.div
+        <AsyncMotion
+          element="div"
           className="absolute bottom-20 right-20 w-[400px] h-[400px] bg-primary-200/35 rounded-full mix-blend-multiply filter blur-[100px]"
-          animate={{
-            x: [0, -80, 0],
-            y: [0, -40, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut"
+          load={inView}
+          motionProps={{
+            animate: {
+              x: [0, -80, 0],
+              y: [0, -40, 0],
+              scale: [1, 1.2, 1],
+            },
+            transition: {
+              duration: 12,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            },
           }}
         />
-        <motion.div
+        <AsyncMotion
+          element="div"
           className="absolute top-1/2 left-1/2 w-[350px] h-[350px] bg-accent-peach-200/25 rounded-full mix-blend-multiply filter blur-[100px]"
-          animate={{
-            x: [0, 40, 0],
-            y: [0, -80, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: "easeInOut"
+          load={inView}
+          motionProps={{
+            animate: {
+              x: [0, 40, 0],
+              y: [0, -80, 0],
+              scale: [1, 1.1, 1],
+            },
+            transition: {
+              duration: 14,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            },
           }}
         />
 
@@ -177,10 +189,10 @@ const HeroSection = ({ analytics }) => {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 text-center pt-24 md:pt-32">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+        <AsyncMotion
+          element="div"
+          motionProps={{ initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay: 0.2 } }}
+          load={inView}
         >
           {/* Badge */}
           {/* <motion.div
@@ -196,43 +208,44 @@ const HeroSection = ({ analytics }) => {
           </motion.div> */}
 
           {/* Headline */}
-          <motion.h1
+          <AsyncMotion
+            element="h1"
             className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-heading font-extrabold mb-4 md:mb-6 leading-tight text-shadow px-2"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            motionProps={{ initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay: 0.4 } }}
+            load={inView}
           >
             <span className="block">Endless ways to</span>
             <span className="text-gradient inline-block">sweat.</span>
             <br className="hidden sm:block" />
             <span className="block sm:inline">One place to </span>
             <span className="text-gradient-peach inline-block">find it.</span>
-          </motion.h1>
+          </AsyncMotion>
 
           {/* Subtext */}
-          <motion.p
+          <AsyncMotion
+            element="p"
             className="text-base sm:text-xl md:text-2xl text-gray-600 mb-8 md:mb-12 max-w-3xl mx-auto font-body px-2"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            motionProps={{ initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay: 0.6 } }}
+            load={inView}
           >
             From aerial yoga to bungee fitness, discover exciting classes tailored to your fitness goals.
             <br className="hidden sm:block" />
             <span className="text-petal-600 font-semibold">Move Together, Grow Together.</span>
-          </motion.p>
+          </AsyncMotion>
 
           {/* CTA Buttons */}
-          <motion.div
+          <AsyncMotion
+            element="div"
             className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            motionProps={{ initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay: 0.8 } }}
+            load={inView}
           >
-            <motion.button
+            <AsyncMotion
+              element="button"
               onClick={handleSignupClick}
               className="group relative px-8 py-4 bg-gradient-primary rounded-full font-semibold text-lg overflow-hidden shadow-2xl"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              load={inView}
+              motionProps={{ whileHover: { scale: 1.05 }, whileTap: { scale: 0.95 } }}
             >
               <span className="relative z-10 flex items-center gap-2">
                 Join the Movement
@@ -240,19 +253,20 @@ const HeroSection = ({ analytics }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </span>
-              <motion.div
+              <AsyncMotion
+                element="div"
                 className="absolute inset-0 bg-white/20"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: '100%' }}
-                transition={{ duration: 0.5 }}
+                load={inView}
+                motionProps={{ initial: { x: '-100%' }, whileHover: { x: '100%' }, transition: { duration: 0.5 } }}
               />
-            </motion.button>
+            </AsyncMotion>
 
-            <motion.button
+            <AsyncMotion
+              element="button"
               onClick={() => handleHowItWorksClick('button')}
               className="group px-8 py-4 glass-strong rounded-full font-semibold text-lg hover:bg-white/15 transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              load={inView}
+              motionProps={{ whileHover: { scale: 1.05 }, whileTap: { scale: 0.95 } }}
             >
               <span className="flex items-center gap-2">
                 Watch How It Works
@@ -260,29 +274,28 @@ const HeroSection = ({ analytics }) => {
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </span>
-            </motion.button>
-          </motion.div>
+            </AsyncMotion>
+          </AsyncMotion>
 
           {/* Scroll Indicator */}
-          <motion.div
+          <AsyncMotion
+            element="div"
             className="mt-6 md:mt-12 mb-8 md:mb-0 relative z-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
+            motionProps={{ initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { delay: 1.5 } }}
           >
-            <motion.div
+            <AsyncMotion
+              element="div"
               className="inline-flex flex-col items-center gap-2 text-gray-500 cursor-pointer"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              motionProps={{ animate: { y: [0, 10, 0] }, transition: { duration: 2, repeat: Infinity } }}
               onClick={() => handleHowItWorksClick('scroll-indicator')}
             >
               <span className="text-sm font-medium">Scroll to explore</span>
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+              </AsyncMotion>
+            </AsyncMotion>
+          </AsyncMotion>
       </div>
 
     </section>
