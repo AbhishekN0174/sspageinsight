@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compression from 'vite-plugin-compression'
+import inlineCriticalCss from './scripts/inline-critical-css.js'
 
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
@@ -12,6 +13,8 @@ export default defineConfig(({ mode }) => {
       react(),
       // Bundle visualizer - generates `dist/bundle-stats.html` after build
       visualizer({ filename: 'dist/bundle-stats.html', open: false, gzipSize: true, brotliSize: true }),
+      // Inline critical CSS to improve FCP
+      inlineCriticalCss(),
       // Precompress assets (gzip + brotli) for faster delivery
       compression({ algorithm: 'gzip', ext: '.gz', deleteOriginFile: false }),
       compression({ algorithm: 'brotli', ext: '.br', deleteOriginFile: false })
