@@ -146,6 +146,8 @@ const ClassDetailPage = () => {
                 <img
                   src={mainImage}
                   alt={session.className || 'SweatSocial Class'}
+                  width={1200}
+                  height={720}
                   className="w-full h-[260px] md:h-[360px] object-cover"
                   loading="eager"
                 />

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: /sitemap.xml
+# Simple robots.txt to allow crawling. Generate a sitemap separately if needed.

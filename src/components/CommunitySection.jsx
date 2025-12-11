@@ -441,6 +441,8 @@ const Card = ({
         <img
           src={card.url}
           alt={card.title}
+          width={800}
+          height={600}
           className="w-full h-full object-cover"
           loading="lazy"
           draggable={false}

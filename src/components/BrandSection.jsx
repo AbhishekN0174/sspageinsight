@@ -79,6 +79,8 @@ const BrandSection = () => {
             <img
               src="https://assets-v2.codedesign.ai/storage/v1/object/public/680b37e3efe2f11ac90457f3_fffa2dfa/asset-41f92320"
               alt="SweatSocial"
+              width={160}
+              height={80}
               className="h-20 w-auto"
             />
           </motion.div>

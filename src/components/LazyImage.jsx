@@ -5,7 +5,9 @@ const LazyImage = ({
   alt, 
   className = '', 
   placeholderClassName = 'bg-petal-100',
-  onLoad = () => {} 
+  onLoad = () => {},
+  width, // required to avoid CLS
+  height, // required to avoid CLS
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [imageSrc, setImageSrc] = useState(null)
@@ -40,10 +42,14 @@ const LazyImage = ({
     onLoad()
   }
 
+  // compute padding-top to reserve aspect ratio if width/height provided
+  const paddingTop = width && height ? `${(height / width) * 100}%` : undefined
+
   return (
     <div 
       ref={imgRef}
       className={`relative overflow-hidden ${className}`}
+      style={paddingTop ? { paddingTop } : undefined}
     >
       {/* Placeholder */}
       {!isLoaded && (
@@ -55,7 +61,9 @@ const LazyImage = ({
         <img
           src={imageSrc}
           alt={alt}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
+          width={width}
+          height={height}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}
           onLoad={handleImageLoad}

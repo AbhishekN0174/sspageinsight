@@ -193,6 +193,8 @@ const EventDetailPage = () => {
                 <img
                   src={mainImage}
                   alt={event.eventName || 'SweatSocial Event'}
+                  width={1200}
+                  height={720}
                   className="w-full h-[260px] md:h-[360px] object-cover"
                   loading="eager"
                 />

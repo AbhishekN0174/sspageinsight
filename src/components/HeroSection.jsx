@@ -12,7 +12,10 @@ const HeroSection = ({ analytics }) => {
   const [loadVideo, setLoadVideo] = useState(false)
 
   useEffect(() => {
-    if (inView) setLoadVideo(true)
+    if (inView) {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+      if (!isMobile) setLoadVideo(true)
+    }
   }, [inView])
 
   // Debounced mouse move handler - updates only every 30ms
@@ -106,6 +109,7 @@ const HeroSection = ({ analytics }) => {
         className="absolute inset-0 z-0 w-full h-full object-cover"
         style={{ opacity: 0.5 }}
         preload="none"
+        poster="/background.jpg"
       >
         {loadVideo && (
           <>

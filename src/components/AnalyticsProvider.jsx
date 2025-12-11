@@ -1,26 +1,47 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { initAnalytics, trackPageView, trackNavigationFlow, stopTimeTracking } from '../utils/analytics'
 import { MIXPANEL_TOKEN } from '../config/analytics'
 
 const AnalyticsProvider = ({ children }) => {
   const location = useLocation()
   const previousPathRef = useRef(null)
 
-  // Initialize analytics on mount
+  const analyticsRef = useRef(null)
+
+  // Initialize analytics on mount (dynamically import to avoid bundling mixpanel in main chunk)
   useEffect(() => {
-    if (MIXPANEL_TOKEN) {
-      initAnalytics(MIXPANEL_TOKEN)
-    } else {
+    if (!MIXPANEL_TOKEN) {
       console.warn('MIXPANEL_TOKEN not found in environment variables')
+      return
+    }
+
+    let mounted = true
+    // Defer loading analytics until after first paint
+    const t = setTimeout(() => {
+      import('../utils/analytics')
+        .then((mod) => {
+          if (!mounted) return
+          analyticsRef.current = mod
+          if (MIXPANEL_TOKEN && mod.initAnalytics) {
+            mod.initAnalytics(MIXPANEL_TOKEN)
+          }
+        })
+        .catch((err) => {
+          console.error('Failed to load analytics module:', err)
+        })
+    }, 2000)
+
+    return () => {
+      mounted = false
+      clearTimeout(t)
     }
   }, [])
 
   // Track page views on route change
   useEffect(() => {
-    // Stop previous time tracking
-    if (MIXPANEL_TOKEN) {
-      stopTimeTracking()
+    // Stop previous time tracking (if analytics loaded dynamically)
+    if (analyticsRef.current && analyticsRef.current.stopTimeTracking) {
+      analyticsRef.current.stopTimeTracking()
     }
 
     // Get page name from path
@@ -43,19 +64,19 @@ const AnalyticsProvider = ({ children }) => {
       ? getPageName(previousPathRef.current)
       : null
 
-    // Track with Mixpanel (if token exists)
-    if (MIXPANEL_TOKEN) {
-      // Track navigation flow
-      if (previousPage && previousPage !== pageName) {
+    // Track with Mixpanel (if analytics module loaded)
+    if (analyticsRef.current) {
+      const { trackNavigationFlow, trackPageView } = analyticsRef.current
+      if (previousPage && previousPage !== pageName && trackNavigationFlow) {
         trackNavigationFlow(pageName, previousPage)
       }
-
-      // Track page view
-      trackPageView(pageName, {
-        pathname: location.pathname,
-        search: location.search,
-        hash: location.hash,
-      })
+      if (trackPageView) {
+        trackPageView(pageName, {
+          pathname: location.pathname,
+          search: location.search,
+          hash: location.hash,
+        })
+      }
     }
 
     // Track with Google Analytics

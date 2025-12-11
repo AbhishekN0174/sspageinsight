@@ -701,6 +701,8 @@ const ClassesCalendarView = () => {
                               <img
                                 src={session.image || session.class?.image || '/studio1.jpg'}
                                 alt={session.className}
+                                width={80}
+                                height={80}
                                 className="w-20 h-20 lg:w-24 lg:h-24 object-cover rounded-lg flex-shrink-0"
                               />
                             )}

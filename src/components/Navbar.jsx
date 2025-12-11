@@ -58,6 +58,8 @@ const Navbar = () => {
             <img
               src={ssLogo}
               alt="SweatSocial Logo"
+              width={80}
+              height={80}
               className="h-16 md:h-20 w-auto"
             />
           </motion.a>

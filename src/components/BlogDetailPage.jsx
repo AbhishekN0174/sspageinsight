@@ -86,6 +86,8 @@ const BlogDetailPage = () => {
             <img
               src={post.image}
               alt={post.title}
+              width={1200}
+              height={600}
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent" />
@@ -210,6 +212,8 @@ const BlogDetailPage = () => {
                         <img
                           src={relatedPost.image}
                           alt={relatedPost.title}
+                          width={400}
+                          height={240}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent" />

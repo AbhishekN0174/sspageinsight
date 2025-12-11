@@ -59,6 +59,8 @@ const Footer = () => {
                 <img
                   src={ssLogo}
                   alt="SweatSocial"
+                  width={160}
+                  height={80}
                   className="h-20 md:h-24 w-auto mb-4"
                 />
               </div>
