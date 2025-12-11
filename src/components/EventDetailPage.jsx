@@ -145,7 +145,9 @@ const EventDetailPage = () => {
       <div className="container mx-auto px-6 relative z-10">
         {/* Loading / error / not found states */}
         {loading && (
-          <div className="max-w-3xl mx-auto glass rounded-3xl p-8 md:p-10 animate-pulse">
+          // Keep the same placeholder layout but remove the pulse animation
+          // to avoid the visible buffering circle while preserving UI shape.
+          <div className="max-w-3xl mx-auto glass rounded-3xl p-8 md:p-10">
             <div className="h-6 bg-petal-100/70 rounded w-1/3 mb-4" />
             <div className="h-8 bg-petal-100/70 rounded w-2/3 mb-6" />
             <div className="h-52 bg-petal-100/50 rounded-2xl mb-6" />

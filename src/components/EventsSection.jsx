@@ -82,6 +82,25 @@ const EventsSection = ({ analytics, sourcePage = 'Home' }) => {
       : trackEventAction(name, event, { ...extra, url })
   }
 
+  // Prefetch EventDetail chunk and API data on hover/touch to reduce navigation wait
+  const prefetchEventDetail = (eventId) => {
+    try {
+      // Dynamic import will load the route chunk without rendering it
+      import('../components/EventDetailPage')
+        .catch(() => {})
+
+      // Warm the API cache by requesting the event data (fire-and-forget)
+      if (eventId) {
+        const url = `${API_BASE_URL}/api/v1/events/getEventById/${eventId}`
+        // Use keepalive for background requests where supported
+        fetch(url, { method: 'GET', keepalive: true }).catch(() => {})
+      }
+    } catch (err) {
+      // swallow errors — this is optional optimization only
+      // console.debug('prefetch failed', err)
+    }
+  }
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -308,6 +327,8 @@ const EventsSection = ({ analytics, sourcePage = 'Home' }) => {
                         )}
                         <motion.a
                           href={`/events/${event._id}`}
+                          onPointerOver={() => prefetchEventDetail(event._id)}
+                          onTouchStart={() => prefetchEventDetail(event._id)}
                           onClick={() => {
                             trackEventLink(
                               'Event Card - View Details',
