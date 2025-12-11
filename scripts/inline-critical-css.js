@@ -19,12 +19,12 @@ html {
 body {
   background: white;
   color: rgb(31, 41, 55);
-  font-family: 'Nunito Sans', system-ui, sans-serif;
+  font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Kumbh Sans', system-ui, sans-serif;
+  font-family: 'Kumbh Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   font-weight: bold;
   color: rgb(17, 24, 39);
 }
@@ -76,6 +76,11 @@ img {
   width: 100%;
 }
 
+/* Fallback fonts */
+.fallback-font {
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -116,6 +121,13 @@ export default function inlineCriticalCss() {
       html = html.replace(
         /<script type="module" crossorigin src="([^"]+)"><\/script>/,
         '<script type="module" crossorigin defer src="$1"><\/script>'
+      )
+      
+      // Optimize Google Fonts URL to load only critical weights (400,600,700) on mobile
+      // Split fonts: load common weights immediately, defer others
+      html = html.replace(
+        /href="https:\/\/fonts\.googleapis\.com\/css2\?family=Plus\+Jakarta\+Sans:wght@400;500;600;700;800&family=Kumbh\+Sans:wght@400;600;700;800&family=Nunito\+Sans:wght@400;600;700&display=swap"/g,
+        'href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Kumbh+Sans:wght@400;700&family=Nunito+Sans:wght@400;600;700&display=swap"'
       )
       
       // Remove unnecessary modulepreload for non-critical chunks on initial page load
