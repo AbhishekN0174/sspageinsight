@@ -130,23 +130,16 @@ export default function inlineCriticalCss() {
         '<link rel="preload" as="style" crossorigin href="/assets/$1" onload="this.rel=\'stylesheet\'">\n    <noscript><link rel="stylesheet" crossorigin href="/assets/$1"></noscript>'
       )
       
-      // Optimize Google Fonts URL to load only critical weights (400,600,700) on mobile
-      // Split fonts: load common weights immediately, defer others
+      // Defer Google Fonts using media=print + onload to prevent render-blocking
+      // Load only essential weights (400, 600, 700)
       html = html.replace(
-        /href="https:\/\/fonts\.googleapis\.com\/css2\?family=Plus\+Jakarta\+Sans:wght@400;500;600;700;800&family=Kumbh\+Sans:wght@400;600;700;800&family=Nunito\+Sans:wght@400;600;700&display=swap"/g,
-        'href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Kumbh+Sans:wght@400;700&family=Nunito+Sans:wght@400;600;700&display=swap"'
+        /href="https:\/\/fonts\.googleapis\.com\/css2[^"]*"/g,
+        'href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Kumbh+Sans:wght@400;700&family=Nunito+Sans:wght@400;600;700&display=swap" media="print" onload="this.media=\'all\'"'
       )
       
-      // Remove unnecessary modulepreload for non-critical chunks on initial page load
-      // Keep only if used above fold (but on mobile, these aren't needed)
-      html = html.replace(/<link rel="modulepreload"[^>]*>/g, (match) => {
-        // Only keep modulepreload for vendor on desktop
-        // For mobile, we'll lazy-load them
-        if (match.includes('vendor')) {
-          return match // Keep vendor preload for faster route navigation
-        }
-        return '' // Remove maps and animation modulepreload
-      })
+      // Remove all modulepreload links to save bandwidth on mobile
+      // Chunks will be lazy-loaded on-demand via dynamic import
+      html = html.replace(/<link rel="modulepreload"[^>]*>/g, '')
       
       bundle[htmlFile].source = html
     }

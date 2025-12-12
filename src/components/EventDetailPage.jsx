@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { API_BASE_URL } from '../apiConfig'
@@ -54,17 +54,35 @@ const EventDetailPage = () => {
           throw new Error('Failed to load event details')
         }
         const data = await response.json()
-        setEvent(data.event)
         
-        // Track Meta Pixel ViewContent when event detail page loads
-        if (typeof window !== 'undefined' && window.fbq && data.event) {
-          window.fbq('track', 'ViewContent', {
-            content_name: data.event.eventName || 'Event',
-            content_category: 'Event',
-            content_ids: [data.event._id || ''],
-            value: data.event.price || 0,
-            currency: 'INR',
-          })
+        // Defer analytics and pixel tracking to idle callback
+        // This prevents blocking navigation on mobile
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(() => {
+            setEvent(data.event)
+            // Track Meta Pixel ViewContent when event detail page loads
+            if (typeof window !== 'undefined' && window.fbq && data.event) {
+              window.fbq('track', 'ViewContent', {
+                content_name: data.event.eventName || 'Event',
+                content_category: 'Event',
+                content_ids: [data.event._id || ''],
+                value: data.event.price || 0,
+                currency: 'INR',
+              })
+            }
+          }, { timeout: 1000 })
+        } else {
+          setEvent(data.event)
+          // Track Meta Pixel ViewContent when event detail page loads
+          if (typeof window !== 'undefined' && window.fbq && data.event) {
+            window.fbq('track', 'ViewContent', {
+              content_name: data.event.eventName || 'Event',
+              content_category: 'Event',
+              content_ids: [data.event._id || ''],
+              value: data.event.price || 0,
+              currency: 'INR',
+            })
+          }
         }
       } catch (err) {
         console.error('Error fetching event details:', err)

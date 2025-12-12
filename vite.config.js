@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
     // Include .MOV files as assets
     assetsInclude: ['**/*.MOV', '**/*.mov'],
     build: {
-      // Code splitting for better caching
+      // Code splitting for better caching and lazy-loading
       rollupOptions: {
         output: {
           manualChunks: {
@@ -41,20 +41,28 @@ export default defineConfig(({ mode }) => {
           }
         }
       },
-      // Minify CSS and JS
+      // Aggressive minification for smaller bundles
       minify: 'terser',
       terserOptions: {
         compress: {
           drop_console: true,
-          drop_debugger: true
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info'],
+          unused: true,
+        },
+        mangle: true,
+        format: {
+          comments: false,
         }
       },
-      // Target for modern browsers
+      // Target modern browsers only (reduce polyfill overhead)
       target: 'es2020',
       // Reduce chunk size warnings
       chunkSizeWarningLimit: 1000,
       // CSS optimization
       cssCodeSplit: true,
+      // Inline small assets to reduce HTTP requests
+      assetsInlineLimit: 8192,
     }
   }
 })
